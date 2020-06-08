@@ -1,0 +1,26 @@
+---
+- hosts: DL_Lab
+   
+  tasks:
+   - name: Loading Variables
+     include_vars:
+      file: /home/ansible/preetham/F5Ansible/3-multipleNodeCreation(Loops)/variables.json
+      name: configurationList
+      
+   - name: Creating new Nodes
+     bigip_node: 
+      fqdn: '{{ item.fqdn }}'
+      name: '{{ item.name }}'
+      description: '{{ item.description }}'
+      state: '{{ item.state }}'
+      provider:
+       server: '{{ configurationList.provider.server }}'
+       user: '{{ configurationList.provider.user }}'
+       password: '{{ configurationList.provider.password }}'
+       validate_certs: '{{ configurationList.provider.validate_certs }}'
+     with_items:
+      - '{{ configurationList.nodeConfigurationList }}'
+     delegate_to: localhost
+     
+   
+     

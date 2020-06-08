@@ -1,0 +1,13 @@
+---
+- hosts: DL_Lab
+   
+  tasks:
+   - name: Loading Variables
+     include_vars:
+      file: /home/ansible/preetham/F5Ansible/2-nodeCreationAsVariables/variables.json
+      name: configurationList
+      
+   - name: Creating new Node
+     bigip_node: "{{ configurationList.nodeConfigurationList }}"
+     delegate_to: localhost
+     

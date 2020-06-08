@@ -1,0 +1,70 @@
+{
+ provider: {
+   server: 'lb-1.ultrwarp.com',
+   user: 'admin',
+   password: '',
+   validate_certs: 'no'
+ },
+ nodeConfigurationList: [
+   {
+     state: 'present',
+     name: 'test-a.ultrwarp.com',
+     partition: 'Common',
+     fqdn: 'test-a.ultrwarp.com',
+     description: 'ansible WMS App'
+   },
+   {
+     state: 'present',
+     name: 'test-w.ultrwarp.com',
+     partition: 'Common',
+     fqdn: 'test-w.ultrwarp.com',
+     description: 'ansible WMS Web'
+   }
+ ],
+ poolConfigurationList: [
+   {
+     state: 'present',
+     name: 'test-w.ultrwarp.com-pool',
+     partition: 'Common',
+     lb_method: 'round-robin',
+     monitor_type: 'single',
+     monitors: ['tcp'],
+     poolMembers: [
+       {
+         state: 'present',
+         name: 'test-w.ultrwarp.com',
+         port: 5001,
+         description: 'ansible ult web server'
+       },
+       {
+         state: 'present',
+         name: 'test-w.ultrwarp.com',
+         port: 6001,
+         description: 'ansible ult web server'
+       }
+     ]
+   },
+   {
+     state: 'present',
+     name: 'test-a.ultrwarp.com-pool',
+     partition: 'Common',
+     lb_method: 'round-robin',
+     monitor_type: 'single',
+     monitors: ['tcp_half_open'],
+     poolMembers: [
+       {
+         state: 'present',
+         name: 'test-a.ultrwarp.com',
+         port: 5001,
+         description: 'ansible app web server'
+       },
+       {
+         state: 'present',
+         name: 'test-a.ultrwarp.com',
+         port: 6001,
+         description: 'ansible app web server'
+       }
+     ]
+   }
+ ]
+}

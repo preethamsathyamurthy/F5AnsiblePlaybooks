@@ -1,0 +1,177 @@
+{
+ provider: {
+   server: 'lb-1.ultrwarp.com',
+   user: 'admin',
+   password: '',
+   validate_certs: 'no'
+ },
+ nodeConfigurationList: [
+   {
+     state: 'present',
+     name: 'test-a.ultrwarp.com',
+     partition: 'Common',
+     fqdn: 'test-a.ultrwarp.com',
+     description: 'ansible WMS App'
+   },
+   {
+     state: 'present',
+     name: 'test-w.ultrwarp.com',
+     partition: 'Common',
+     fqdn: 'test-w.ultrwarp.com',
+     description: 'ansible WMS Web'
+   }
+ ],
+ poolConfigurationList: [
+   {
+     state: 'present',
+     name: 'test-w.ultrwarp.com-pool',
+     partition: 'Common',
+     lb_method: 'round-robin',
+     monitor_type: 'single',
+     monitors: ['tcp'],
+     poolMembers: [
+       {
+         state: 'present',
+         name: 'test-w.ultrwarp.com',
+         port: 5001,
+         description: 'ansible ult web server'
+       },
+       {
+         state: 'present',
+         name: 'test-w.ultrwarp.com',
+         port: 6001,
+         description: 'ansible ult web server'
+       }
+     ]
+   },
+   {
+     state: 'present',
+     name: 'test-a.ultrwarp.com-pool',
+     partition: 'Common',
+     lb_method: 'round-robin',
+     monitor_type: 'single',
+     monitors: ['tcp_half_open'],
+     poolMembers: [
+       {
+         state: 'present',
+         name: 'test-a.ultrwarp.com',
+         port: 5001,
+         description: 'ansible app web server'
+       },
+       {
+         state: 'present',
+         name: 'test-a.ultrwarp.com',
+         port: 6001,
+         description: 'ansible app web server'
+       }
+     ]
+   },
+   {
+     state: 'present',
+     name: 'test-mtf-4605.ultrawarp.com-pool',
+     partition: 'Common',
+     lb_method: 'round-robin',
+     monitor_type: 'single',
+     monitors: ['tcp'],
+     poolMembers: [
+       {
+         state: 'present',
+         name: 'test-a.ultrwarp.com',
+         port: 4605,
+         description: 'ansible app mtf server'
+       }
+     ]
+   }
+ ],
+ dataGroupConfigurationList: [
+   {
+     state: 'present',
+     name: 'test-a.ultrwarp-dev-dg',
+     internal: 'yes',
+     type: 'string',
+     records: [
+       {
+         key: 'Version',
+         value: '2019'
+       },
+       {
+         key: 'test-w.ultrwarp.com-pool',
+         value: '/login'
+       },
+       {
+         key: 'test-a.ultrwarp.com-pool',
+         value: '/delta/login'
+       }
+     ]
+   }
+ ],
+ snatPoolConfiguration: {
+    state: 'present',
+    name: 'test.ultrwarp.com-snatPool',
+    members: [
+      '10.0.0.1'
+    ]
+  },
+ virtualServerConfigurationList: [
+   {
+     state: 'present',
+     name: 'test.ultrwarp.com-vs-http',
+     partition: 'Common',
+     destination: '0.0.0.0',
+     port: 80,
+     ip_protocol: 'tcp',
+     snat: 'none',
+     description: 'ansible Customer ultrawarp description',
+     pool: '',
+     default_persistence_profile: '',
+     profiles: [
+       'http',
+       {
+         name: 'clientssl',
+         context: 'server-side'
+       }
+     ],
+     irules: [
+       'httptohttps-secure-redirect-default'
+     ]
+   },
+   {
+     state: 'present',
+     name: 'atest.ultrwarp.com-vs-https',
+     partition: 'Common',
+     destination: '0.0.0.0',
+     port: 443,
+     ip_protocol: 'tcp',
+     snat: 'none',
+     description: 'ansible Customer ultrawarp description',
+     pool: '',
+     default_persistence_profile: 'cookie',
+     profiles: [
+       'http',
+       {
+         name: 'clientssl',
+         context: 'server-side'
+       }
+     ],
+     irules: [
+       'test-mp-irule'
+     ]
+   },
+   {
+     state: 'present',
+     name: 'aa03-int-4605-wmswlm-dv1-vs-https',
+     partition: 'Common',
+     destination: '0.0.0.0',
+     port: 4605,
+     ip_protocol: 'tcp',
+     snat: 'none',
+     description: 'ansible Customer ultrawarp description',
+     pool: 'test-mtf-4605.ultrawarp.com-pool',
+     default_persistence_profile: '',
+     profiles: [
+     ],
+     irules: [
+     ]
+   }
+ ]
+}

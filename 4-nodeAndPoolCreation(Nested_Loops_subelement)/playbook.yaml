@@ -1,0 +1,63 @@
+---
+- hosts: DL_Lab
+   
+  tasks:
+   - name: Loading Variables
+     include_vars:
+      file: '/home/ansible/preetham/F5Ansible/4-nodeAndPoolCreation(Nested_Loops_subelement)/variables.json'
+      name: configurationList
+      
+   - name: Creating new Nodes
+     bigip_node: 
+      state: '{{ item.state }}'
+      name: '{{ item.name }}'
+      fqdn: '{{ item.fqdn }}'
+      partition: '{{ item.partition }}'
+      description: '{{ item.description }}'
+      provider:
+       server: '{{ configurationList.provider.server }}'
+       user: '{{ configurationList.provider.user }}'
+       password: '{{ configurationList.provider.password }}'
+       validate_certs: '{{ configurationList.provider.validate_certs }}'
+     with_items:
+      - '{{ configurationList.nodeConfigurationList }}'
+     delegate_to: localhost
+     
+   - name: Creating Pools
+     bigip_pool:
+      state: '{{ item.state }}'
+      name: '{{ item.name }}'
+      partition: '{{ item.partition }}'
+      lb_method: '{{ item.lb_method }}'
+      monitor_type: '{{ item.monitor_type }}'
+      monitors: '{{ item.monitors }}'
+      provider:
+       server: '{{ configurationList.provider.server }}'
+       user: '{{ configurationList.provider.user }}'
+       password: '{{ configurationList.provider.password }}'
+       validate_certs: '{{ configurationList.provider.validate_certs }}'
+     with_items:
+      - '{{ configurationList.poolConfigurationList }}'
+     delegate_to: localhost
+     
+   - name: Adding pool members
+     bigip_pool_member:
+      state: '{{ item.1.state }}'
+      pool: '{{ item.0.name }}'
+      partition: '{{ item.0.partition }}'
+      name: '{{ item.1.name  }}'
+      host: '{{ item.1.name  }}'
+      port: '{{ item.1.port }}'
+      description: '{{ item.1.description }}'
+      reuse_nodes: 'yes'
+      provider:
+       server: '{{ configurationList.provider.server }}'
+       user: '{{ configurationList.provider.user }}'
+       password: '{{ configurationList.provider.password }}'
+       validate_certs: '{{ configurationList.provider.validate_certs }}'
+     with_subelements:
+      - '{{ configurationList.poolConfigurationList }}'
+      - poolMembers
+     delegate_to: localhost
+
+      

@@ -1,0 +1,19 @@
+{
+ provider: {
+   server: 'lba.ultrwarp.com',
+   user: 'admin',
+   password: '',
+   validate_certs: 'no'
+ },
+ nodeConfigurationList: {
+   fqdn: 'test-1.ultrwarp.com',
+   name: 'test-1.ultrwarp.com',
+   description: 'ansible test node creation of node variables',
+   provider: {
+     server: 'lba.ultrwarp.com',
+     user: 'admin',
+     password: '',
+     validate_certs: 'no'
+   }
+ }
+}

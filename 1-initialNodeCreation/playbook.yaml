@@ -1,0 +1,20 @@
+---
+- hosts: DL_Lab
+  vars:
+   name: test-1.ultrwarp.com
+   fqdn: test-2.ultrwarp.com
+   description: ansible test node creation
+   
+  tasks:
+   - name: Creating new Node
+     bigip_node:
+      fqdn: '{{ fqdn }}'
+      name: '{{ name }}'
+      description: '{{ description }}'
+      provider:
+       server: lb-a.ultrawarp.com
+       user: admin
+       password: something
+       validate_certs: "no"
+     delegate_to: localhost
+     

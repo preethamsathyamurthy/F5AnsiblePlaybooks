@@ -1,0 +1,22 @@
+{
+ provider: {
+   server: 'lb-1.ultrwarp.com',
+   user: 'admin',
+   password: '',
+   validate_certs: 'no'
+ },
+ nodeConfigurationList: [
+   {
+     fqdn: 'test-a.ultrwarp.com',
+     name: 'test-a.ultrwarp.com',
+     description: 'ansible ult App',
+     state: 'absent'
+   },
+   {
+     fqdn: 'test-w.ultrwarp.com',
+     name: 'test-w.ultrwarp.com',
+     description: 'ansible ult Web',
+     state: 'absent'
+   }
+ ]
+}
